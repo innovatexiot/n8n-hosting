@@ -23,6 +23,7 @@ x-shared: &shared
     - postgres
     - redis
   volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
     - n8n_storage:/home/node/.n8n
   depends_on:
     redis:
