@@ -14,7 +14,7 @@ services:
     volumes:
       - odoo_data:/var/lib/odoo
     networks:
-      - odoo_network
+      - shared_network
 
 networks:
   shared_network:
