@@ -1,5 +1,3 @@
-version: '3.8'
-
 volumes:
   db_storage:
   n8n_storage:
@@ -68,6 +66,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    networks:
+      - shared_network
 
   n8n:
     <<: *shared
@@ -81,3 +81,7 @@ services:
       - n8n
     networks:
       - shared_network
+
+networks:
+  shared_network:
+    name: shared_network
