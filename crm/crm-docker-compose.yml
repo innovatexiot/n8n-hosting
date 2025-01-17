@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  odoo:
+    image: odoo:16
+    container_name: odoo
+    depends_on:
+      - postgres
+    environment:
+      - HOST=postgres
+      - USER=${CRM_POSTGRES_DB_USER}
+      - PASSWORD=${CRM_POSTGRES_DB_PASSWORD}
+      - DATABASE_NAME=${CRM_POSTGRES_DB}
+    ports:
+      - "8069:8069"
+    volumes:
+      - odoo_data:/var/lib/odoo
+    networks:
+      - odoo_network
+
+networks:
+  odoo_network:
+
+volumes:
+  odoo_data:
