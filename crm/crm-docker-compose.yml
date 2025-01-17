@@ -17,7 +17,8 @@ services:
       - odoo_network
 
 networks:
-  odoo_network:
+  shared_network:
+    external: true
 
 volumes:
   odoo_data:

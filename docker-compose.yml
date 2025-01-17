@@ -19,8 +19,8 @@ x-shared: &shared
     - QUEUE_BULL_REDIS_HOST=redis
     - QUEUE_HEALTH_CHECK_ACTIVE=true
     - N8N_ENCRYPTION_KEY=${ENCRYPTION_KEY}
-    - N8N_ALLOW_CORS=vm-gcp.innovatexiot.com
-    - WEBHOOK_URL=https://vm-gcp.innovatexiot.com
+    - N8N_ALLOW_CORS=vm-gcp.n8n.innovatexiot.com
+    - WEBHOOK_URL=https://vm-gcp.n8n.innovatexiot.com
     - N8N_HOST=0.0.0.0
     - N8N_PORT=5678
   links:
@@ -34,6 +34,8 @@ x-shared: &shared
       condition: service_healthy
     postgres:
       condition: service_healthy
+  networks:
+    - shared_network
 
 services:
   postgres:
@@ -53,6 +55,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    networks:
+      - shared_network
 
   redis:
     image: redis:6-alpine
@@ -75,3 +79,5 @@ services:
     command: worker
     depends_on:
       - n8n
+    networks:
+      - shared_network
