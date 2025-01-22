@@ -5,7 +5,7 @@ volumes:
 
 x-shared: &shared
   restart: always
-  image: n8nio/n8n:latest
+  image: n8nio/n8n:next
   environment:
     - DB_TYPE=postgresdb
     - DB_POSTGRESDB_HOST=postgres
