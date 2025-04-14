@@ -20,6 +20,9 @@ services:
       - DATABASE_NAME=${EVOLUTION_POSTGRES_DB_NAME}
       - DATABASE_USER=${EVOLUTION_POSTGRES_DB_USER}
       - DATABASE_PASSWORD=${EVOLUTION_POSTGRES_DB_PASS}
+      - REDIS_ENABLED=true
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     volumes:
       - evolution-data:/app/data
     restart: unless-stopped
