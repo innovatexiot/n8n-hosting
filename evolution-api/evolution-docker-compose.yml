@@ -21,6 +21,10 @@ services:
     volumes:
       - evolution-data:/app/data
     restart: unless-stopped
-
+    networks:
+      - shared_network
 volumes:
   evolution-data:
+networks:
+  shared_network:
+    external: true
