@@ -12,6 +12,12 @@ services:
       - AUTO_RECONNECT=true
       - SAVE_SESSION=true
       - MULTI_DEVICE=true
+      - DATABASE_PROVIDER=postgresql
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=${EVOLUTION_POSTGRES_DB_NAME}
+      - DATABASE_USER=${EVOLUTION_POSTGRES_DB_USER}
+      - DATABASE_PASSWORD=${EVOLUTION_POSTGRES_DB_PASS}
     volumes:
       - evolution-data:/app/data
     restart: unless-stopped
