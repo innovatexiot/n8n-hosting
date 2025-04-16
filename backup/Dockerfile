@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Instalar dependencias: cron, clientes de BD, gzip, curl (para SDK), ca-certificates
 RUN apt-get update && apt-get install -y --no-install-recommends \
     cron \
-    mariadb-client \  # Usar cliente MariaDB
+    mariadb-client \
     postgresql-client \
     gzip \
     curl \
