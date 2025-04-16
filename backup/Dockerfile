@@ -1,42 +1,50 @@
-# backup-docker/Dockerfile
-
-# Usar una imagen base ligera como Debian Bullseye Slim
+# Usar una imagen base ligera con herramientas comunes. Debian es una buena opción.
 FROM debian:bullseye-slim
 
-# Establecer variables de entorno para evitar diálogos interactivos
+# Evitar preguntas interactivas durante la instalación
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Instalar dependencias: curl, gnupg, lsb-release (para repos GCS), procps, gzip, clientes DB
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    curl \
-    gnupg \
-    lsb-release \
-    procps \
+# Instalar dependencias: cron, clientes de BD, gzip, curl (para SDK), ca-certificates
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    cron \
+    mysql-client \
+    postgresql-client \
     gzip \
-    # Añadir repositorios e instalar gcloud SDK (incluye gsutil)
-    && echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
-    apt-get update && apt-get install -y google-cloud-sdk && \
-    # Instalar cliente MySQL
-    apt-get install -y default-mysql-client && \
-    # Instalar cliente PostgreSQL
-    apt-get install -y postgresql-client && \
-    # Limpiar caché de apt
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
-# Crear directorios para scripts, secretos y configuración opcional
-RUN mkdir /app && \
-    mkdir -p /etc/gcloud-secrets && \
-    mkdir -p /etc/db-secrets
+# Instalar Google Cloud SDK (incluye gsutil)
+RUN curl https://sdk.cloud.google.com > /tmp/install.sh && \
+    bash /tmp/install.sh --disable-prompts --install-dir=/usr/local && \
+    rm /tmp/install.sh
+# Añadir gcloud al PATH (puede que no sea estrictamente necesario si siempre usas la ruta completa)
+ENV PATH $PATH:/usr/local/google-cloud-sdk/bin
+
+# Crear directorio para scripts y logs dentro del contenedor
+RUN mkdir -p /app/scripts /app/temp_backups /app/logs
 
 # Copiar el script de backup al contenedor
-COPY backup_dbs.sh /app/backup_dbs.sh
-RUN chmod +x /app/backup_dbs.sh
+COPY backup_dbs.sh /app/scripts/backup_dbs.sh
+RUN chmod +x /app/scripts/backup_dbs.sh
+
+# Crear un archivo crontab
+# Ejecutará el script cada día a las 3:00 AM (dentro del contenedor)
+# Redirige la salida a un log DENTRO del contenedor Y a stdout/stderr de Docker
+RUN echo "0 3 * * *   root    /app/scripts/backup_dbs.sh >> /proc/1/fd/1 2>> /proc/1/fd/2" > /etc/cron.d/backup-cron
+# Dar permisos correctos al crontab
+RUN chmod 0644 /etc/cron.d/backup-cron
+# Aplicar el crontab
+RUN crontab /etc/cron.d/backup-cron
+
+# Crear el archivo de log para cron y darle permisos
+RUN touch /var/log/cron.log
 
 # Establecer el directorio de trabajo
 WORKDIR /app
 
-# El contenedor ejecutará este script por defecto cuando se inicie
-CMD ["/app/backup_dbs.sh"]
+# Comando para iniciar cron en primer plano (para que el contenedor siga corriendo)
+# y también mostrar el log de cron
+CMD cron && tail -f /var/log/cron.log
+# O una opción más simple y común para contenedores:
+# CMD cron -f
