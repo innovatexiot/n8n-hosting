@@ -4,7 +4,7 @@ FROM debian:bullseye-slim
 # Evitar preguntas interactivas durante la instalación
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Instalar dependencias: cron, clientes de BD, gzip, curl (para SDK), ca-certificates
+# Instalar dependencias: cron, clientes de BD, gzip, curl, ca-certificates y PYTHON3
 RUN apt-get update && apt-get install -y --no-install-recommends \
     cron \
     mariadb-client \
@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gzip \
     curl \
     ca-certificates \
+    python3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Instalar Google Cloud SDK (incluye gsutil)
@@ -34,11 +35,6 @@ RUN chmod +x /app/scripts/backup_dbs.sh
 RUN echo "0 3 * * *   root    /app/scripts/backup_dbs.sh >> /proc/1/fd/1 2>> /proc/1/fd/2" > /etc/cron.d/backup-cron
 # Dar permisos correctos al crontab
 RUN chmod 0644 /etc/cron.d/backup-cron
-# Aplicar el crontab (esto no es estrictamente necesario si cron lee /etc/cron.d/)
-# RUN crontab /etc/cron.d/backup-cron
-
-# Crear el archivo de log para cron y darle permisos (puede no ser necesario con CMD ["cron", "-f"])
-# RUN touch /var/log/cron.log
 
 # Establecer el directorio de trabajo
 WORKDIR /app
