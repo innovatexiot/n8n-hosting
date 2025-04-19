@@ -12,8 +12,10 @@ services:
       - DATABASE_NAME=${CRM_POSTGRES_DB}
     ports:
       - "8069:8069"
+      - "8072:8072"  # <-- Agregado para longpolling
     volumes:
       - odoo_data:/var/lib/odoo
+    command: --longpolling-port=8072  # <-- Agregado para habilitar longpolling
     networks:
       - shared_network
 
