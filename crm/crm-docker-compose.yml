@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   odoo:
-    image: odoo:16
+    image: odoo:18
     env_file: .env
     container_name: odoo
     environment:
