@@ -16,7 +16,6 @@ services:
     volumes:
       - odoo_data:/var/lib/odoo
       - ./odoo.conf:/etc/odoo/odoo.conf
-    command: --longpolling-port=8072
     networks:
       - shared_network
 
