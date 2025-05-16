@@ -88,6 +88,18 @@ services:
     networks:
       - shared_network
 
+  n8n-worker-2:
+    <<: *shared
+    command: worker
+    depends_on:
+      - n8n
+
+  n8n-worker-3:
+    <<: *shared
+    command: worker
+    depends_on:
+      - n8n
+
 networks:
   shared_network:
     name: shared_network
