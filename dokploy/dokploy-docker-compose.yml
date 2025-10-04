@@ -8,12 +8,12 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--providers.file.directory=/etc/dokploy/traefik/dynamic"
       - "--providers.file.watch=true"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.address=:8083"
+      - "--entrypoints.websecure.address=:8443"
     ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
+      - "8083:8080"
+      - "8443:8443"
+      - "8443:8443/udp"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
