@@ -11,7 +11,7 @@ services:
       - "--entrypoints.web.address=:8083"
       - "--entrypoints.websecure.address=:8443"
     ports:
-      - "8083:8080"
+      - "8083:8080"     # Traefik dashboard (si lo usas)
       - "8443:8443"
       - "8443:8443/udp"
     volumes:
@@ -20,31 +20,45 @@ services:
       - ./traefik/dynamic:/etc/dokploy/traefik/dynamic
     networks:
       - dokploy-network
-      - shared_network
+    restart: unless-stopped
+
+  # Nuevo: Redis dentro del mismo stack de Dokploy
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - dokploy_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    networks:
+      - dokploy-network
     restart: unless-stopped
 
   dokploy:
     image: dokploy/dokploy:latest
     env_file:
-      - .env    
+      - .env
     environment:
-      # Puerto del panel
       - PORT=3000
 
-      # URL externa para Dokploy (IMPORTANTE para proxy reverso)
+      # URL pública del panel
       - DOKPLOY_URL=https://dokploy.innovatexiot.com
       - APP_URL=https://dokploy.innovatexiot.com
       - BASE_URL=https://dokploy.innovatexiot.com
 
-      # Usa TU Postgres externo (formato URL estándar de Postgres)
-      # Las credenciales se obtienen automáticamente del archivo .env
+      # Postgres externo (usa tus variables del .env)
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE}
 
-      # Usa el Redis del proyecto n8n-hosting
-      - REDIS_HOST=n8n-hosting-redis-1
+      # Redis interno del stack
+      - REDIS_HOST=redis
       - REDIS_PORT=6379
+      # (si tu versión admite URL, alternativamente)
+      # - REDIS_URL=redis://redis:6379
 
-      # (Opcional) Si quieres cambiar puertos que usa Traefik internamente
+      # Puertos “lógicos” para Traefik si Dokploy los requiere
       - TRAEFIK_PORT=80
       - TRAEFIK_SSL_PORT=443
     volumes:
@@ -52,21 +66,20 @@ services:
       - ./data:/etc/dokploy
       - docker_config:/root/.docker
     ports:
-      - "3000:3000"
+      - "3000:3000"   # panel Dokploy
     depends_on:
-      - traefik
+      traefik:
+        condition: service_started
+      redis:
+        condition: service_healthy
     networks:
       - dokploy-network
-      - shared_network
     restart: unless-stopped
 
 networks:
   dokploy-network:
-    external: true
-    name: dokploy-network
-  shared_network:
-    external: true
-    name: shared_network
+    driver: bridge   # red local bridge creada por este compose
 
 volumes:
   docker_config: {}
+  dokploy_redis_data: {}
