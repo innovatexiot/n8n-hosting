@@ -4,12 +4,14 @@ services:
   traefik:
     image: traefik:v3.5
     command:
+      - "--configFile=/etc/traefik/traefik.yml"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.swarmMode=true"
       - "--providers.file.directory=/etc/dokploy/traefik/dynamic"
       - "--providers.file.watch=true"
-      - "--entrypoints.web.address=:8083"
-      - "--entrypoints.websecure.address=:8443"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
     ports:
       - "8083:8080"     # Traefik dashboard (si lo usas)
       - "8443:8443"
