@@ -21,11 +21,6 @@ services:
     networks:
       - shared_network
     restart: unless-stopped
-  # Servicios compartidos con n8n-hosting (no crear contenedores nuevos)
-  redis:
-    external: true
-    networks:
-      - shared_network
 
   dokploy:
     image: dokploy/dokploy:latest
@@ -45,7 +40,8 @@ services:
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE}
 
       # Usa el Redis del proyecto n8n-hosting
-      - REDIS_HOST=redis:6379
+      - REDIS_HOST=n8n-hosting-redis-1
+      - REDIS_PORT=6379
 
       # (Opcional) Si quieres cambiar puertos que usa Traefik internamente
       - TRAEFIK_PORT=80
@@ -58,7 +54,6 @@ services:
       - "3000:3000"
     depends_on:
       - traefik
-      - redis
     networks:
       - shared_network
     restart: unless-stopped
