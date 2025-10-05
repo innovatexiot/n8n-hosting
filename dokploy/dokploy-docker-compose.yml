@@ -19,6 +19,7 @@ services:
       - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
       - ./traefik/dynamic:/etc/dokploy/traefik/dynamic
     networks:
+      - dokploy-network
       - shared_network
     restart: unless-stopped
 
@@ -55,12 +56,17 @@ services:
     depends_on:
       - traefik
     networks:
+      - dokploy-network
       - shared_network
     restart: unless-stopped
 
 networks:
+  dokploy-network:
+    external: true
+    name: dokploy-network
   shared_network:
     external: true
+    name: shared_network
 
 volumes:
   docker_config: {}
