@@ -21,7 +21,6 @@ services:
     networks:
       - shared_network
     restart: unless-stopped
-
   dokploy:
     image: dokploy/dokploy:latest
     env_file:
@@ -29,6 +28,11 @@ services:
     environment:
       # Puerto del panel
       - PORT=3000
+
+      # URL externa para Dokploy (IMPORTANTE para proxy reverso)
+      - DOKPLOY_URL=https://dokploy.innovatexiot.com
+      - APP_URL=https://dokploy.innovatexiot.com
+      - BASE_URL=https://dokploy.innovatexiot.com
 
       # Usa TU Postgres externo (formato URL estándar de Postgres)
       # Las credenciales se obtienen automáticamente del archivo .env
