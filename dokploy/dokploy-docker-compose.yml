@@ -10,7 +10,7 @@ services:
       - "--providers.docker.swarmMode=true"
       - "--providers.file.directory=/etc/dokploy/traefik/dynamic"
       - "--providers.file.watch=true"
-      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.address=:8081"
       - "--entrypoints.websecure.address=:443"
     ports:
       - "8083:8080"     # Traefik dashboard (si lo usas)
