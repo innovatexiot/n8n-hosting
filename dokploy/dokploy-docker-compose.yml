@@ -74,6 +74,7 @@ services:
 networks:
   dokploy-network:
     driver: bridge   # red local bridge creada por este compose
+    external: true
 
 volumes:
   docker_config: {}
