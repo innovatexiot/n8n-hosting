@@ -12,7 +12,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
       - ./traefik/dynamic:/etc/dokploy/traefik/dynamic:ro
-      - /etc/dokploy/traefik:/etc/dokploy/traefik:ro
+      - /etc/dokploy/traefik/dynamic:/dynamic:ro
     networks:
       - dokploy-network
     restart: unless-stopped
