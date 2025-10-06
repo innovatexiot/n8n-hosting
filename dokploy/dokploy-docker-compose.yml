@@ -7,7 +7,6 @@ services:
       - "--configFile=/etc/traefik/traefik.yml"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.swarmMode=true"
       - "--providers.file.directory=/etc/dokploy/traefik/dynamic"
       - "--providers.file.watch=true"
       - "--entrypoints.web.address=:8081"
