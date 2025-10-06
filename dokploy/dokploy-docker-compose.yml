@@ -11,6 +11,7 @@ services:
       - "--providers.file.watch=true"
       - "--entrypoints.web.address=:8081"
       - "--entrypoints.websecure.address=:443"
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
     ports:
       - "8083:8080"     # Traefik dashboard (si lo usas)
       - "8081:8081"
