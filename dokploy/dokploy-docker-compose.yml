@@ -5,13 +5,6 @@ services:
     image: traefik:v3.5
     command:
       - "--configFile=/etc/traefik/traefik.yml"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--providers.file.directory=/etc/dokploy/traefik/dynamic"
-      - "--providers.file.watch=true"
-      - "--entrypoints.web.address=:8081"
-      - "--entrypoints.websecure.address=:443"
-      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
     ports:
       - "8083:8080"     # Traefik dashboard (si lo usas)
       - "8081:8081"
@@ -81,7 +74,6 @@ services:
 networks:
   dokploy-network:
     driver: bridge   # red local bridge creada por este compose
-    external: true
 
 volumes:
   docker_config: {}
