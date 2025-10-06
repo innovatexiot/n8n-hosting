@@ -4,13 +4,13 @@ log: { level: DEBUG }
 
 entryPoints:
   web:
-    address: ":8081"          # Nginx hace el TLS delante
+    address: ":8081"        # Traefik solo HTTP (TLS lo hace Nginx)
 
 providers:
   swarm:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
-    network: dokploy-network  # MISMA red overlay/attachable de tus services
+    network: dokploy-network   # MISMA red overlay/attachable
   file:
-    directory: /dynamic       # <— aquí leerá los YML que genera Dokploy
+    directory: /dynamic        # ← leeremos los YAML que genera Dokploy
     watch: true
