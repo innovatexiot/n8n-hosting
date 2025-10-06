@@ -1,14 +1,13 @@
-services:
-  traefik:
-    image: traefik:v3.5
-    command:
-      - "--configFile=/etc/traefik/traefik.yml"   # nada más aquí
-    ports:
-      - "8081:8081"   # necesario para Nginx -> Traefik
-      - "8083:8080"   # dashboard opcional
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
-    networks:
-      - dokploy-network
-    restart: unless-stopped
+api:
+  dashboard: true
+
+log:
+  level: DEBUG
+
+entryPoints:
+  web:
+    address: ":8081"   # HTTP plano (sin TLS)
+
+providers:
+  docker:
+    exposedByDefault: false
