@@ -6,10 +6,13 @@ log:
 
 entryPoints:
   web:
-    address: ":8081"
+    address: ":8081"         # HTTP (Nginx hace el TLS delante)
 
 providers:
   swarm:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
-    network: dokploy-network
+    network: dokploy-network # misma red overlay/attachable de tus services
+  file:
+    directory: /etc/dokploy/traefik/dynamic
+    watch: true

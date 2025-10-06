@@ -1,3 +1,4 @@
 .idea/
 crm/.env
 backup/.env
+dokploy/traefik/traefik.yml
