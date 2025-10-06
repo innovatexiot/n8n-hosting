@@ -1,16 +1,19 @@
-api: { dashboard: true }
+api:
+  dashboard: true
+  insecure: true     # <— añade esto
 
-log: { level: DEBUG }
+log:
+  level: DEBUG
 
 entryPoints:
   web:
-    address: ":8081"        # Traefik solo HTTP (TLS lo hace Nginx)
+    address: ":8081"
 
 providers:
   swarm:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
-    network: dokploy-network   # MISMA red overlay/attachable
+    network: dokploy-network
   file:
-    directory: /dynamic        # ← leeremos los YAML que genera Dokploy
+    directory: /dynamic
     watch: true
