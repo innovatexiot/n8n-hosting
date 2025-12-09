@@ -1,0 +1,40 @@
+version: '3.8'
+
+volumes:
+  jenkins_data:
+
+services:
+  jenkins-controller:
+    image: jenkins/jenkins:lts
+    container_name: jenkins-controller
+    privileged: true
+    user: root
+    ports:
+      - 8086:8080
+      - 50000:50000
+    volumes:
+      - jenkins_data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - JENKINS_OPTS=--prefix=/
+    networks:
+      - shared_network
+    restart: always
+
+  jenkins-agent:
+    image: jenkins/ssh-agent:jdk11
+    container_name: jenkins-agent
+    privileged: true
+    user: root
+    expose:
+      - 22
+    environment:
+      - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCTaVsMt76m+zwIXSC4WTq4pcVWgMnQlRXflBfqWfM2K78H9lAfKrQhI5s7lcW/n5MrKcjDS47RK4FOSZZCfyKCO8/39HoO7MES7UpZH9b7CNzPPsRckP56FNfAdRtewO3NzBCF7bfi9CXjIIRqEb9wzcCEeCJ9bk2kHDNkvnOAnPnjz7ic5Zrg4uqYGKHChOZTRayMuqXigt62EDmSN4wOZuwyJIfNyG4F94zYCdfrSm1sO7161QSmsYdWPZl70UVy09+453Ru3pdGML76jQUIDnYAse77mJksHS8/PEidXr+bJJiZ0alu74u3L3sIIB6/lp6oWEgmwjdYlBX4vzHBPCrGDy/zb+p9nHbhKi3AA0FRZYLwIBUtNwlZWAZdxh1AEOmwlJj1PDEpIyUggn1TW/ZUU5TDCdCVqd5/PdvtE9/0AX5m3qdmzWcranOfCS8SKsMjkrTedwASRMam0z9QTQfFzk+W5qCOYwWvdfkgqk4ZO/mwT1JDuSdfjXwH+cuUPVNoj7iG+V+k9lwP4nicMae6eGjQu0odYdgyCnu2ZcggKf1IvamgZIhQA4hEeEVSv8mqnAo0zlrAY5OLSPhnCJI9J4pO3BsdkCozXN1EXyfHPCyB1bVYQIFMehGF4enLQepYR9ZorRMQ5Oet7rzgdEc2XN0JsexPkpmjd784CQ== jenkins-agent-key
+    networks:
+      - shared_network
+    restart: always
+
+networks:
+  shared_network:
+    name: shared_network
+    external: true

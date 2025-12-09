@@ -94,6 +94,43 @@ Cada `.conf` en `nginx/` representa un bloque `server` de Nginx para un dominio 
 
 ---
 
+## Servicios configurados
+
+### Dokploy (`dokploy.conf`)
+- **Dominio**: `https://dokploy.innovatexiot.com`
+- **Backend**: `http://127.0.0.1:3000` (Dokploy corriendo en Docker)
+- **Características**:
+  - SSL completo con Let's Encrypt
+  - Proxy reverso con headers de seguridad
+  - Soporte para WebSockets
+  - Configuración optimizada para aplicaciones en tiempo real
+  - Headers específicos para URL externa (Origin, Referer)
+
+**Configuración requerida:**
+1. **Variables de entorno en Dokploy** (docker-compose.yml):
+   ```yaml
+   - DOKPLOY_URL=https://dokploy.innovatexiot.com
+   - APP_URL=https://dokploy.innovatexiot.com
+   - BASE_URL=https://dokploy.innovatexiot.com
+   ```
+
+2. **Archivo .env**: Copia `.env.example` a `.env` y configura las credenciales
+
+3. **Configuración SSL**:
+   ```bash
+   # Ejecutar el script incluido para configurar SSL
+   ./setup-dokploy-ssl.sh
+   ```
+
+**¿Por qué es importante configurar la URL externa?**
+Dokploy necesita saber su URL externa para:
+- Generar enlaces absolutos correctos
+- Configurar redirecciones
+- Mostrar la URL correcta en la interfaz
+- Funcionar correctamente detrás de un proxy reverso
+
+---
+
 ## Convenciones y buenas prácticas
 
 * **Nombre de archivo**: debe coincidir con `server_name` para facilitar la gestión.
