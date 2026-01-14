@@ -24,6 +24,16 @@ x-shared: &shared
     - N8N_PROXY_HOPS=1
     - NODE_FUNCTION_ALLOW_BUILTIN=*
     - NODE_FUNCTION_ALLOW_EXTERNAL=*
+    # v2.0 Security Settings
+    - N8N_BLOCK_ENV_ACCESS_IN_NODE=true
+    - N8N_SKIP_AUTH_ON_OAUTH_CALLBACK=false
+    - N8N_RESTRICT_FILE_ACCESS_TO=/home/node/.n8n-files
+    - N8N_GIT_NODE_DISABLE_BARE_REPOS=true
+    # v2.0 Binary Data Mode (database mode for queue mode)
+    - N8N_DEFAULT_BINARY_DATA_MODE=database
+    # v2.0 Task Runners (required for Code nodes)
+    - N8N_RUNNERS_ENABLED=true
+    - N8N_RUNNERS_MODE=internal
   links:
     - postgres
     - redis
@@ -40,28 +50,6 @@ x-shared: &shared
     - shared_network
 
 services:
-  postgres:
-    image: postgres:16
-    restart: always
-    environment:
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_DB
-      - POSTGRES_NON_ROOT_USER
-      - POSTGRES_NON_ROOT_PASSWORD
-    ports:
-      - "5432:5432"
-    volumes:
-      - db_storage:/var/lib/postgresql/data
-      - ./init-data.sh:/docker-entrypoint-initdb.d/init-data.sh
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
-      interval: 5s
-      timeout: 5s
-      retries: 10
-    networks:
-      - shared_network
-
   redis:
     image: redis:6-alpine
     restart: always
